@@ -6637,17 +6637,6 @@ define('skylark-utils/filer',[
             // To limit the number of concurrent uploads,
             // set the following option to an integer greater than 0:
             limitConcurrentUploads: undefined,
-            // Set the following option to true to force iframe transport uploads:
-            forceIframeTransport: false,
-            // Set the following option to the location of a redirect url on the
-            // origin server, for cross-domain iframe transport uploads:
-            redirect: undefined,
-            // The parameter name for the redirect url, sent as part of the form
-            // data and set to 'redirect' if this option is empty:
-            redirectParamName: undefined,
-            // Set the following option to the location of a postMessage window,
-            // to enable postMessage transport uploads:
-            postMessage: undefined,
             // By default, XHR file uploads are sent as multipart/form-data.
             // The iframe transport is always using multipart/form-data.
             // Set to false to enable non-multipart XHR uploads:
@@ -6684,7 +6673,7 @@ define('skylark-utils/filer',[
             i18n: function (message, context) {
                 message = this.messages[message] || message.toString();
                 if (context) {
-                    $.each(context, function (key, value) {
+                    langx.each(context, function (key, value) {
                         message = message.replace('{' + key + '}', value);
                     });
                 }
@@ -6812,10 +6801,10 @@ define('skylark-utils/filer',[
                 file = o.files[0],
                 // Ignore non-multipart setting if not supported:
                 multipart = o.multipart,
-                paramName = $.type(o.paramName) === 'array' ?
+                paramName = langx.type(o.paramName) === 'array' ?
                     o.paramName[0] : o.paramName;
 
-            o.headers = $.extend({}, o.headers);
+            o.headers = langx.mixin({}, o.headers);
             if (o.contentRange) {
                 o.headers['Content-Range'] = o.contentRange;
             }
@@ -6829,11 +6818,11 @@ define('skylark-utils/filer',[
                 if (o.blob) {
                     formData.append(paramName, o.blob, file.name);
                 } else {
-                    $.each(o.files, function (index, file) {
+                    langx.each(o.files, function (index, file) {
                         // This check allows the tests to run with
                         // dummy objects:
                         formData.append(
-                            ($.type(o.paramName) === 'array' &&
+                            (langx.type(o.paramName) === 'array' &&
                                 o.paramName[index]) || paramName,
                             file,
                             file.uploadName || file.name
@@ -6890,46 +6879,6 @@ define('skylark-utils/filer',[
             };
         }
 
-        function done(result, textStatus, jqXHR, options) {
-            var total = options._progress.total,
-                response = options._response;
-            if (options._progress.loaded < total) {
-                // Create a progress event if no final progress event
-                // with loaded equaling total has been triggered:
-                xoption.progressing({
-                    lengthComputable: true,
-                    loaded: total,
-                    total: total
-                });
-            }
-            response.result = options.result = result;
-            response.textStatus = options.textStatus = textStatus;
-            response.jqXHR = options.jqXHR = jqXHR;
-
-            xoption.completed();
-            this._trigger('done', null, options);
-        }
-
-        function fail(jqXHR, textStatus, errorThrown, options) {
-            var response = options._response;
-            if (options.recalculateProgress) {
-                // Remove the failed (error or abort) file upload from
-                // the global progress calculation:
-                this._progress.loaded -= options._progress.loaded;
-                this._progress.total -= options._progress.total;
-            }
-            response.jqXHR = options.jqXHR = jqXHR;
-            response.textStatus = options.textStatus = textStatus;
-            response.errorThrown = options.errorThrown = errorThrown;
-            this._trigger('fail', null, options);
-        }
-
-        function progress() {
-            
-        }
-
-
-
         function chunkedUpload(options, testOnly) {
             options.uploadedBytes = options.uploadedBytes || 0;
             var that = this,
@@ -6977,28 +6926,26 @@ define('skylark-utils/filer',[
                 // Process the upload data (the blob and potential form data):
                 initXHRData(o);
                 // Add progress listeners for this chunk upload:
-                initProgressListener(o);
-                jqXHR = ((that._trigger('chunksend', null, o) !== false && $.ajax(o)) ||
-                        that._getXHRPromise(false, o.context))
-                    .done(function (result, textStatus, jqXHR) {
+                //initProgressListener(o);
+                jqXHR = $.ajax(o).done(function (result, textStatus, jqXHR) {
                         ub = getUploadedBytes(jqXHR) ||
                             (ub + o.chunkSize);
                         // Create a progress event if no final progress event
                         // with loaded equaling total has been triggered
                         // for this chunk:
                         if (currentLoaded + o.chunkSize - o._progress.loaded) {
-                            that._onProgress($.Event('progress', {
+                            dfd.progress({
                                 lengthComputable: true,
                                 loaded: ub - o.uploadedBytes,
                                 total: ub - o.uploadedBytes
-                            }), o);
+                            });
                         }
                         options.uploadedBytes = o.uploadedBytes = ub;
                         o.result = result;
                         o.textStatus = textStatus;
                         o.jqXHR = jqXHR;
-                        that._trigger('chunkdone', null, o);
-                        that._trigger('chunkalways', null, o);
+                        //that._trigger('chunkdone', null, o);
+                        //that._trigger('chunkalways', null, o);
                         if (ub < fs) {
                             // File upload not yet complete,
                             // continue with the next chunk:
@@ -7014,15 +6961,15 @@ define('skylark-utils/filer',[
                         o.jqXHR = jqXHR;
                         o.textStatus = textStatus;
                         o.errorThrown = errorThrown;
-                        that._trigger('chunkfail', null, o);
-                        that._trigger('chunkalways', null, o);
+                        //that._trigger('chunkfail', null, o);
+                        //that._trigger('chunkalways', null, o);
                         dfd.rejectWith(
                             o.context,
                             [jqXHR, textStatus, errorThrown]
                         );
                     });
             };
-            this._enhancePromise(promise);
+            //this._enhancePromise(promise);
             promise.abort = function () {
                 return jqXHR.abort();
             };
@@ -7037,10 +6984,6 @@ define('skylark-utils/filer',[
         var jqXhr = chunkedUpload(xoptions) || ajax(xoptions);
 
         jqXhr.options = xoptions;
-
-        jqXhr.progress(function(e){
-
-        });
 
         return jqXhr;
     }
@@ -11604,7 +11547,20 @@ define('skylark-utils/widget',[
 	    // subclasses using an alternative DOM manipulation API.
 	    _setAttributes: function(attributes) {
 	      this.$el.attr(attributes);
-	    }
+	    },
+
+        // Translation function, gets the message key to be translated
+        // and an object with context specific data as arguments:
+        i18n: function (message, context) {
+            message = (this.messages && this.messages[message]) || message.toString();
+            if (context) {
+                langx.each(context, function (key, value) {
+                    message = message.replace('{' + key + '}', value);
+                });
+            }
+            return message;
+        },
+
   	});
 
 
