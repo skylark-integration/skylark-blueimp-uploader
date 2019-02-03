@@ -18,6 +18,7 @@ $(function () {
     $('#fileupload').fileupload({
         // Uncomment the following to send cross-domain cookies:
         //xhrFields: {withCredentials: true},
+        picker: $(".fileinput-button"),
         url: '/upload/default'
     });
 

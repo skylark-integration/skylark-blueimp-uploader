@@ -18,7 +18,7 @@
           return relative;
         }
         var stack = base.split("/"),
-            parts = relative.split("/");    
+            parts = relative.split("/");
         stack.pop(); 
         for (var i=0; i<parts.length; i++) {
             if (parts[i] == ".")
@@ -44,7 +44,7 @@
             map[id] = factory;
         }
     };
-    require =  globals.require = function(id) {
+    require = globals.require = function(id) {
         if (!map.hasOwnProperty(id)) {
             throw new Error('Module ' + id + ' has not been defined');
         }
@@ -56,51 +56,50 @@
                 args.push(require(dep));
             })
 
-            module.exports = module.factory.apply(window, args);
+            module.exports = module.factory.apply(globals, args);
         }
         return module.exports;
     };
   }
+  
+  if (!define) {
+     throw new Error("The module utility (ex: requirejs or skylark-utils) is not loaded!");
+  }
 
   factory(define,require);
 
-  if (isAmd) {
-    require.get = function(context, id, relMap, localRequire) {
-        if (context.intakeDefines) {
-          context.intakeDefines(true);
-        }
-        return context.defined[id];
+  if (!isAmd) {
+    var skylarkjs = require("skylark-langx/skylark");
+
+    if (isCmd) {
+      module.exports = skylarkjs;
+    } else {
+      globals.skylarkjs  = skylarkjs;
     }
-  }
-
-  var jQuery =  require("skylark-jquery/main");
-
-  if (isCmd) {
-      exports = jQuery;
-  } else {
-      globals.jQuery = globals.$ = jQuery;
   }
 
 })(function(define,require) {
 
 define('skylark-jquery/core',[
-	"skylark-utils/skylark",
-	"skylark-utils/browser",
-	"skylark-utils/langx",
-	"skylark-utils/noder",
-	"skylark-utils/datax",
-	"skylark-utils/eventer",
-	"skylark-utils/finder",
-	"skylark-utils/fx",
-	"skylark-utils/styler",
-	"skylark-utils/query"
-],function(skylark,browser,langx,noder,datax,eventer,finder,fx,styler,query){
+	"skylark-langx/skylark",
+	"skylark-langx/langx",
+	"skylark-utils-dom/browser",
+	"skylark-utils-dom/noder",
+	"skylark-utils-dom/datax",
+	"skylark-utils-dom/eventer",
+	"skylark-utils-dom/finder",
+	"skylark-utils-dom/fx",
+	"skylark-utils-dom/styler",
+	"skylark-utils-dom/query"
+],function(skylark,langx,browser,noder,datax,eventer,finder,fx,styler,query){
 	var filter = Array.prototype.filter,
 		slice = Array.prototype.slice;
 
     (function($){
 	    $.fn.jquery = '2.2.0';
 
+	    $.browser = browser;
+	    
 	    $.camelCase = langx.camelCase;
 
 		$.cleanData = function( elems ) {
@@ -118,21 +117,7 @@ define('skylark-jquery/core',[
 	
 	    $.each = langx.each;
 
-	    $.extend = function(target) {
-	        var deep, args = slice.call(arguments, 1);
-	        if (typeof target == 'boolean') {
-	            deep = target
-	            target = args.shift()
-	        }
-	        if (args.length == 0) {
-	            args = [target];
-	            target = this;
-	        }
-	        args.forEach(function(arg) {
-	        	langx.mixin(target, arg, deep);
-	        });
-	        return target;
-	    };
+	    $.extend = langx.extend;
 
 	    $.grep = function(elements, callback) {
 	        return filter.call(elements, callback)
@@ -147,6 +132,7 @@ define('skylark-jquery/core',[
 	    $.isFunction = langx.isFunction;
 	    $.isWindow = langx.isWindow;
 	    $.isPlainObject = langx.isPlainObject;
+        $.isNumeric = langx.isNumber;
 
 	    $.inArray = langx.inArray;
 
@@ -341,6 +327,24 @@ define('skylark-jquery/core',[
 	            curElem.css(props);
 	        }
 	    };
+
+        $._data = function(elm,propName) {
+            if (elm.hasAttribute) {
+                return datax.data(elm,propName);
+            } else {
+                return {};
+            }
+        };
+
+     	var t = $.fn.text;  
+	    $.fn.text = function(v) {
+	        var r = t.apply(this,arguments);
+	        if (r === undefined) {
+	            r = "";
+	        }  
+	        return r;
+	    };       
+        	    
     })(query);
 
     query.parseHTML = function(html) {
@@ -423,6 +427,16 @@ define('skylark-jquery/ajax',[
     };
 
     $.ajax = function(options) {
+        if (!options) {
+            options = {
+                url :  "./"
+            };
+        } else if (langx.isString(options)) {
+            options = {
+                url :  options
+            };
+        }
+
         if ('jsonp' == options.dataType) {
             var hasPlaceholder = /\?.+=\?/.test(options.url);
 
@@ -432,12 +446,24 @@ define('skylark-jquery/ajax',[
             return $.ajaxJSONP(options);
         }
 
-        return langx.Xhr.request(options.url,options);
+        var p = langx.Xhr.request(options.url,options);
+        if (options.success) {
+            p = p.then(options.success,options.error);
+        }
+        p.success = p.done;
+        p.error = p.fail;
+        p.complete = p.always;
+        
+        return p;
     };
 
     // handle optional data/success arguments
     function parseArguments(url, data, success, dataType) {
-        if ($.isFunction(data)) dataType = success, success = data, data = undefined
+        if ($.isFunction(url)) {
+            dataType = data, success = url, data = undefined,url = undefined;
+        } else if ($.isFunction(data)) {
+            dataType = success, success = data, data = undefined;
+        } 
         if (!$.isFunction(success)) dataType = success, success = undefined
         return {
             url: url,
@@ -463,14 +489,19 @@ define('skylark-jquery/ajax',[
         return $.ajax(options)
     }
 
+    var originalLoad = $.fn.load;
+
     $.fn.load = function(url, data, success) {
+        if ("string" != typeof url && originalLoad) {
+            return originalLoad.apply(this, arguments);
+        }
         if (!this.length) return this
         var self = this,
-            parts = url.split(/\s/),
-            selector,
             options = parseArguments(url, data, success),
+            parts = options.url && options.url.split(/\s/),
+            selector,
             callback = options.success
-        if (parts.length > 1) options.url = parts[0], selector = parts[1]
+        if (parts && parts.length > 1) options.url = parts[0], selector = parts[1]
         options.success = function(response) {
             self.html(selector ?
                 $('<div>').html(response.replace(rscript, "")).find(selector) : response)
@@ -667,14 +698,39 @@ define('skylark-jquery/deferred',[
 
     $.Deferred = function() {
         var d = new langx.Deferred(),
-            _p = d.promise;
-        d.promise = function() {
-            return _p;
-        }
-        return d;
-    };
+            ret = {
+                promise : function() {
+                    return d.promise;
+                }
+            };
 
-    $.when = langx.Deferred.when;
+        ["resolve","resolveWith","reject","rejectWith","notify","then","done","fail","progress"].forEach(function(name){
+            ret[name] = function() {
+              var ret2 =   d[name].apply(d,arguments);
+              if (ret2 == d) {
+                ret2 = ret;
+              }
+              return ret2;
+            }
+        });
+
+        return ret;
+    };
+    
+    $.when = function(){
+        var p = langx.Deferred.all(langx.makeArray(arguments)),
+            originThen = p.then;
+        p.then = function(onResolved,onRejected) {
+            var handler = function(results) {
+                results = results.map(function(result){
+                    return [result];
+                });
+                return onResolved && onResolved.apply(null,results);
+            };
+            return originThen.call(p,handler,onRejected);
+        };
+        return p;
+    };
 
     return $;
 
@@ -1095,200 +1151,12 @@ define('skylark-jquery/queue',[
 
 });
 
-define('skylark-utils/widget',[
-    "./skylark",
-    "./langx",
-    "./noder",
-    "./styler",
-    "./geom",
-    "./eventer",
-    "./query"
-], function(skylark,langx,noder,styler,geom,eventer,query) {
-  // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-
-    function widget() {
-        return widget;
-    }
-
-	var Widget = langx.Evented.inherit({
-        init :function(el,options) {
-            if (!langx.isHtmlNode(el)) {
-                options = el;
-                el = null;
-            }
-            if (el) {
-            	this.el = el;
-        	}
-            if (options) {
-                langx.mixin(this,options);
-            }
-            if (!this.cid) {
-                this.cid = langx.uniqueId('w');
-            }
-            this._ensureElement();
-        },
-
-	    // The default `tagName` of a View's element is `"div"`.
-	    tagName: 'div',
-
-	    // jQuery delegate for element lookup, scoped to DOM elements within the
-	    // current view. This should be preferred to global lookups where possible.
-	    $: function(selector) {
-	      return this.$el.find(selector);
-	    },
-
-	    // **render** is the core function that your view should override, in order
-	    // to populate its element (`this.el`), with the appropriate HTML. The
-	    // convention is for **render** to always return `this`.
-	    render: function() {
-	      return this;
-	    },
-
-	    // Remove this view by taking the element out of the DOM, and removing any
-	    // applicable Backbone.Events listeners.
-	    remove: function() {
-	      this._removeElement();
-	      this.unlistenTo();
-	      return this;
-	    },
-
-	    // Remove this view's element from the document and all event listeners
-	    // attached to it. Exposed for subclasses using an alternative DOM
-	    // manipulation API.
-	    _removeElement: function() {
-	      this.$el.remove();
-	    },
-
-	    // Change the view's element (`this.el` property) and re-delegate the
-	    // view's events on the new element.
-	    setElement: function(element) {
-	      this.undelegateEvents();
-	      this._setElement(element);
-	      this.delegateEvents();
-	      return this;
-	    },
-
-	    // Creates the `this.el` and `this.$el` references for this view using the
-	    // given `el`. `el` can be a CSS selector or an HTML string, a jQuery
-	    // context or an element. Subclasses can override this to utilize an
-	    // alternative DOM manipulation API and are only required to set the
-	    // `this.el` property.
-	    _setElement: function(el) {
-	      this.$el = widget.$(el);
-	      this.el = this.$el[0];
-	    },
-
-	    // Set callbacks, where `this.events` is a hash of
-	    //
-	    // *{"event selector": "callback"}*
-	    //
-	    //     {
-	    //       'mousedown .title':  'edit',
-	    //       'click .button':     'save',
-	    //       'click .open':       function(e) { ... }
-	    //     }
-	    //
-	    // pairs. Callbacks will be bound to the view, with `this` set properly.
-	    // Uses event delegation for efficiency.
-	    // Omitting the selector binds the event to `this.el`.
-	    delegateEvents: function(events) {
-	      events || (events = langx.result(this, 'events'));
-	      if (!events) return this;
-	      this.undelegateEvents();
-	      for (var key in events) {
-	        var method = events[key];
-	        if (!langx.isFunction(method)) method = this[method];
-	        if (!method) continue;
-	        var match = key.match(delegateEventSplitter);
-	        this.delegate(match[1], match[2], langx.proxy(method, this));
-	      }
-	      return this;
-	    },
-
-	    // Add a single event listener to the view's element (or a child element
-	    // using `selector`). This only works for delegate-able events: not `focus`,
-	    // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
-	    delegate: function(eventName, selector, listener) {
-	      this.$el.on(eventName + '.delegateEvents' + this.uid, selector, listener);
-	      return this;
-	    },
-
-	    // Clears all callbacks previously bound to the view by `delegateEvents`.
-	    // You usually don't need to use this, but may wish to if you have multiple
-	    // Backbone views attached to the same DOM element.
-	    undelegateEvents: function() {
-	      if (this.$el) this.$el.off('.delegateEvents' + this.uid);
-	      return this;
-	    },
-
-	    // A finer-grained `undelegateEvents` for removing a single delegated event.
-	    // `selector` and `listener` are both optional.
-	    undelegate: function(eventName, selector, listener) {
-	      this.$el.off(eventName + '.delegateEvents' + this.uid, selector, listener);
-	      return this;
-	    },
-
-	    // Produces a DOM element to be assigned to your view. Exposed for
-	    // subclasses using an alternative DOM manipulation API.
-	    _createElement: function(tagName,attrs) {
-	      return noder.createElement(tagName,attrs);
-	    },
-
-	    // Ensure that the View has a DOM element to render into.
-	    // If `this.el` is a string, pass it through `$()`, take the first
-	    // matching element, and re-assign it to `el`. Otherwise, create
-	    // an element from the `id`, `className` and `tagName` properties.
-	    _ensureElement: function() {
-	      if (!this.el) {
-	        var attrs = langx.mixin({}, langx.result(this, 'attributes'));
-	        if (this.id) attrs.id = langx.result(this, 'id');
-	        if (this.className) attrs['class'] = langx.result(this, 'className');
-	        this.setElement(this._createElement(langx.result(this, 'tagName'),attrs));
-	        this._setAttributes(attrs);
-	      } else {
-	        this.setElement(langx.result(this, 'el'));
-	      }
-	    },
-
-	    // Set attributes from a hash on this view's element.  Exposed for
-	    // subclasses using an alternative DOM manipulation API.
-	    _setAttributes: function(attributes) {
-	      this.$el.attr(attributes);
-	    },
-
-        // Translation function, gets the message key to be translated
-        // and an object with context specific data as arguments:
-        i18n: function (message, context) {
-            message = (this.messages && this.messages[message]) || message.toString();
-            if (context) {
-                langx.each(context, function (key, value) {
-                    message = message.replace('{' + key + '}', value);
-                });
-            }
-            return message;
-        },
-
-  	});
-
-
-    langx.mixin(widget, {
-    	$ : query,
-
-    	Widget : Widget
-    });
-
-
-    return skylark.widget = widget;
-});
-
 define('skylark-jquery/main',[
     "./core",
     "./ajax",
     "./callbacks",
     "./deferred",
-    "./queue",
-	"skylark-utils/widget"    
+    "./queue"
 ], function($) {
     return $;
 });
@@ -1297,3 +1165,4 @@ define('skylark-jquery', ['skylark-jquery/main'], function (main) { return main;
 
 
 },this);
+//# sourceMappingURL=sourcemaps/skylark-jquery.js.map

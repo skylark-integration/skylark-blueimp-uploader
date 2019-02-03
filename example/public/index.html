@@ -237,12 +237,18 @@
     </tr>
 {% } %}
 </script>
-<script src="./javascripts/skylark-utils-all.js"></script>
+<script src="./javascripts/skylark-utils-dom-all.js"></script>
 <script src="./javascripts/skylark-jquery.js"></script>
 <!--<script src="http://registry.skylarkjs.org/packages/skylark-jquery/v0.9.6-beta/uncompressed/skylark-jquery-all.js"></script>-->
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <!--<script src="./javascripts/jquery.min.js"></script> -->
-<script src="./javascripts/jquery.ui.widget.js"></script>
+
+<!--
+    <script src="./javascripts/jquery.ui.widget.js"></script> 
+-->
+<script type="text/javascript" src="./javascripts/skylark-jqueryui-interact.js"></script>
+<script type="text/javascript" src="./javascripts/skylark-jqueryui.js"></script>
+
 <!-- The Templates plugin is included to render the upload/download listings -->
 <script src="./javascripts/tmpl.min.js"></script>
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
@@ -256,7 +262,12 @@
 <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
 <!--<script src="./javascripts/jquery.iframe-transport.js"></script>-->
 <!-- The basic File Upload plugin -->
+<script src="./javascripts/skylark-utils-filer.js"></script>
+<!--
 <script src="./javascripts/fileupload.js"></script>
+-->
+<script src="./javascripts/skylark.fileupload.js"></script>
+
 <!-- The File Upload processing plugin -->
 <script src="./javascripts/fileupload-process.js"></script>
 <!-- The File Upload image preview & resize plugin -->
