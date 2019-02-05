@@ -1,37 +1,14 @@
-/*
- * jQuery File Upload User Interface Plugin 9.5.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
+define("fileupload-ui",[
+    "skylark-langx/langx",
+    "skylark-utils-dom/eventer",
+    "skylark-jquery",
+    "tmpl",
+    "fileupload-image",
+    "fileupload-audio",
+    "fileupload-video",
+    "fileupload-validate"
+],function (langx,eventer,$,tmpl) {
 
-/* jshint nomen:false */
-/* global define, window */
-
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            'tmpl',
-            './jquery.fileupload-image',
-            './jquery.fileupload-audio',
-            './jquery.fileupload-video',
-            './jquery.fileupload-validate'
-        ], factory);
-    } else {
-        // Browser globals:
-        factory(
-            window.jQuery,
-            window.tmpl
-        );
-    }
-}(function ($, tmpl) {
     'use strict';
 
     $.blueimp.fileupload.prototype._specialOptions.push(
@@ -698,4 +675,4 @@
 
     });
 
-}));
+});

@@ -1,31 +1,10 @@
-/*
- * jQuery File Upload Validation Plugin 1.1.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2013, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
-
-/* global define, window */
-
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            './jquery.fileupload-process'
-        ], factory);
-    } else {
-        // Browser globals:
-        factory(
-            window.jQuery
-        );
-    }
-}(function ($) {
+define("fileupload-validate",[
+    "skylark-langx/langx",
+    "skylark-utils-dom/eventer",
+    'skylark-jquery',
+    'skylark-jqueryui',
+    "fileupload-process"
+],function (langx,eventer,$) {
     'use strict';
 
     // Append to the default processQueue:
@@ -116,4 +95,4 @@
 
     });
 
-}));
+});

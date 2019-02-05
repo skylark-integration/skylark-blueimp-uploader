@@ -1,38 +1,11 @@
-/*
- * jQuery File Upload Image Preview & Resize Plugin 1.7.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2013, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
-
-/* jshint nomen:false */
-/* global define, window, Blob */
-
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            'load-image',
-            'load-image-meta',
-            'load-image-exif',
-            'load-image-ios',
-            'canvas-to-blob',
-            './jquery.fileupload-process'
-        ], factory);
-    } else {
-        // Browser globals:
-        factory(
-            window.jQuery,
-            window.loadImage
-        );
-    }
-}(function ($, loadImage) {
+define("fileupload-image",[
+    "skylark-langx/langx",
+    "skylark-utils-dom/eventer",
+    "skylark-utils-imagex",
+    'skylark-jquery',
+    'skylark-jqueryui',
+    "fileupload-process"
+],function (langx,eventer,imagex,$) {
     'use strict';
 
     // Prepend to the default processQueue:
@@ -156,7 +129,7 @@
                             file.size > options.maxFileSize) ||
                         (options.fileTypes &&
                             !options.fileTypes.test(file.type)) ||
-                        !loadImage(
+                        !imagex.loadFile(
                             file,
                             function (img) {
                                 if (img.src) {
@@ -201,7 +174,7 @@
                     if (options.thumbnail) {
                         thumbnail = data.exif.get('Thumbnail');
                         if (thumbnail) {
-                            loadImage(thumbnail, resolve, options);
+                            imagex.loadFile(thumbnail, resolve, options);
                             return dfd.promise();
                         }
                     }
@@ -213,7 +186,7 @@
                     }
                 }
                 if (img) {
-                    resolve(loadImage.scale(img, options));
+                    resolve(imagex.scale(img, options));
                     return dfd.promise();
                 }
                 return data;
@@ -265,7 +238,7 @@
                 }
                 var that = this,
                     dfd = $.Deferred();
-                loadImage.parseMetaData(data.files[data.index], function (result) {
+                imagex.meta.parseMetaData(data.files[data.index], function (result) {
                     $.extend(data, result);
                     dfd.resolveWith(that, [data,"aaa"]);
                 }, options);
@@ -312,4 +285,4 @@
 
     });
 
-}));
+});

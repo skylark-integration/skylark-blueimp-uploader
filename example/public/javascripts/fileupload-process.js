@@ -1,32 +1,11 @@
-/*
- * jQuery File Upload Processing Plugin 1.3.0
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2012, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
+define("fileupload-process",[
+    "skylark-langx/langx",
+    "skylark-utils-dom/eventer",
+    'skylark-jquery',
+    'skylark-jqueryui',
+    "fileupload"
+],function (langx,eventer,$) {
 
-/* jshint nomen:false */
-/* global define, window */
-
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        // Register as an anonymous AMD module:
-        define([
-            'jquery',
-            './jquery.fileupload'
-        ], factory);
-    } else {
-        // Browser globals:
-        factory(
-            window.jQuery
-        );
-    }
-}(function ($) {
     'use strict';
 
     var originalAdd = $.blueimp.fileupload.prototype.options.add;
@@ -184,4 +163,4 @@
 
     });
 
-}));
+});
