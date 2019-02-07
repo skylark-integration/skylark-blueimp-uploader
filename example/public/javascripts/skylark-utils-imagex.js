@@ -37,11 +37,16 @@
                 deps: deps.map(function(dep){
                   return absolute(dep,id);
                 }),
+                resolved: false,
                 exports: null
             };
             require(id);
         } else {
-            map[id] = factory;
+            map[id] = {
+                factory : null,
+                resolved : true,
+                exports : factory
+            };
         }
     };
     require = globals.require = function(id) {
@@ -49,14 +54,15 @@
             throw new Error('Module ' + id + ' has not been defined');
         }
         var module = map[id];
-        if (!module.exports) {
+        if (!module.resolved) {
             var args = [];
 
             module.deps.forEach(function(dep){
                 args.push(require(dep));
             })
 
-            module.exports = module.factory.apply(globals, args);
+            module.exports = module.factory.apply(globals, args) || null;
+            module.resolved = true;
         }
         return module.exports;
     };
@@ -88,10 +94,7 @@ define('skylark-utils-imagex/imagex',[
 
 	// The check for URL.revokeObjectURL fixes an issue with Opera 12,
 	// which provides URL.createObjectURL but doesn't properly implement it:
-	var urlAPI =
-		($.createObjectURL && $) ||
-		($.URL && URL.revokeObjectURL && URL) ||
-		($.webkitURL && webkitURL)
+	var urlAPI = URL || webkitURL;
 
 	function revokeHelper (img, options) {
 		if (img._objectURL && !(options && options.noRevoke)) {

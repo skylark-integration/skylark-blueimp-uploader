@@ -11741,10 +11741,12 @@ define('skylark-utils-filer/download',[
 });
 
  define('skylark-utils-filer/webentry',[
+    "skylark-langx/arrays",
     "skylark-langx/Deferred",
     "./filer"
-],function(Deferred, filer){
-   var webentry = (function() {
+],function(arrays,Deferred, filer){
+    var concat = Array.prototype.concat;
+    var webentry = (function() {
         function one(entry, path) {
             var d = new Deferred(),
                 onError = function(e) {
@@ -11777,7 +11779,7 @@ define('skylark-utils-filer/download',[
 
         function all(entries, path) {
             return Deferred.all(
-                langx.map(entries, function(entry) {
+                arrays.map(entries, function(entry) {
                     return one(entry, path);
                 })
             ).then(function() {
@@ -11794,12 +11796,13 @@ define('skylark-utils-filer/download',[
     return filer.webentry = webentry;
 });
   define('skylark-utils-filer/dropzone',[
+    "skylark-langx/arrays",
     "skylark-langx/Deferred",
     "skylark-utils-dom/styler",
     "skylark-utils-dom/eventer",
     "./filer",
     "./webentry"
-],function(Deferred, styler, eventer, filer, webentry){  /*
+],function(arrays,Deferred, styler, eventer, filer, webentry){  /*
      * Make the specified element to could accept HTML5 file drag and drop.
      * @param {HTMLElement} elm
      * @param {PlainObject} params
@@ -11842,7 +11845,7 @@ define('skylark-utils-filer/download',[
                     if (items && items.length && (items[0].webkitGetAsEntry ||
                             items[0].getAsEntry)) {
                         webentry.all(
-                            langx.map(items, function(item) {
+                            arrays.map(items, function(item) {
                                 if (item.webkitGetAsEntry) {
                                     return item.webkitGetAsEntry();
                                 }
@@ -14001,10 +14004,7 @@ define('skylark-utils-imagex/imagex',[
 
 	// The check for URL.revokeObjectURL fixes an issue with Opera 12,
 	// which provides URL.createObjectURL but doesn't properly implement it:
-	var urlAPI =
-		($.createObjectURL && $) ||
-		($.URL && URL.revokeObjectURL && URL) ||
-		($.webkitURL && webkitURL)
+	var urlAPI = URL || webkitURL;
 
 	function revokeHelper (img, options) {
 		if (img._objectURL && !(options && options.noRevoke)) {
