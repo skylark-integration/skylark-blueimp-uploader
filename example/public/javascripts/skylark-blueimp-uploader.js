@@ -168,8 +168,7 @@ define('skylark-blueimp-uploader/fileupload',[
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     "skylark-utils-filer",
-    'skylark-jquery',
-    'skylark-jqueryui/widget'
+    'skylark-jquery'
 ],function (langx,eventer,filer,$) {
     'use strict';
 
@@ -1744,7 +1743,6 @@ define('skylark-blueimp-uploader/addons/image',[
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
@@ -2034,7 +2032,6 @@ define('skylark-blueimp-uploader/addons/audio',[
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
@@ -2120,7 +2117,6 @@ define('skylark-blueimp-uploader/addons/video',[
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
@@ -2205,7 +2201,6 @@ define('skylark-blueimp-uploader/addons/validate',[
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,$) {
     'use strict';

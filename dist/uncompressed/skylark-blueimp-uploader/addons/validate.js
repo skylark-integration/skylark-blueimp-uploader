@@ -2,7 +2,6 @@ define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,$) {
     'use strict';

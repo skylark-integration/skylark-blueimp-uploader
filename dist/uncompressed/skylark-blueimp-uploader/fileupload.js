@@ -2,8 +2,7 @@ define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     "skylark-utils-filer",
-    'skylark-jquery',
-    'skylark-jqueryui/widget'
+    'skylark-jquery'
 ],function (langx,eventer,filer,$) {
     'use strict';
 

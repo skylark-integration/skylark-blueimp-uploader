@@ -3,7 +3,6 @@ define([
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui/widget',
     "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
