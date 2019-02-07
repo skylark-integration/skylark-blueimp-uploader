@@ -11,30 +11,31 @@
     "framework",
     "web"
   ],
-  "homepage": "https://github.com/skylarkui/skylark-blueimp-uploader/",
+  "homepage": "https://github.com/skylark-integration/skylark-blueimp-uploader/",
   "author": "Hudaokeji, Inc.",
   "scripts": {
-    "change-version": "node grunt/change-version.js",
-    "update-shrinkwrap": "npm shrinkwrap --dev && shx mv ./npm-shrinkwrap.json ./grunt/npm-shrinkwrap.json",
-    "test": "grunt test"
+    "build": "sbundle build ."
   },
   "style": "dist/css/bootstrap.css",
   "less": "less/bootstrap.less",
   "main": "./dist/js/main",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skylarkui/skylark-blueimp-uploader.git"
+    "url": "https://github.com/skylark-integration/skylark-blueimp-uploader.git"
   },
   "bugs": {
-    "url": "https://github.com/skylarkui/skylark-blueimp-uploader-uploader/issues"
+    "url": "https://github.com/skylark-integration/skylark-blueimp-uploader-uploader/issues"
   },
   "license": "MIT",
-  "devDependencies": {
-    "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
-    "skylark-utils": "https://github.com/skylarkutils/skylark-utils#master",
-    "skylark-utils-dom": "https://github.com/skylarkutils/skylark-utils-dom#master",
-    "skylark-jquery": "https://github.com/skylarkutils/skylark-jquery#master"
-   },
+  "dependencies": {
+    "skylark-jquery": "git+https://github.com/skylark-integration/skylark-jquery.git#master",
+    "skylark-jqueryui": "git+https://github.com/skylark-integration/skylark-jqueryui.git#master",
+    "skylark-jqueryui-interact": "git+https://github.com/skylark-integration/skylark-jqueryui-interact.git#master",
+    "skylark-langx": "git+https://github.com/skylarklangx/skylark-langx.git#master",
+    "skylark-utils-dom": "git+https://github.com/skylarkutils/skylark-utils-dom.git#master",
+    "skylark-utils-filer": "git+https://github.com/skylarkutils/skylark-utils-filer.git#master",
+    "skylark-utils-imagex": "git+https://github.com/skylarkutils/skylark-utils-imagex.git#master"
+  },
   "engines": {
     "node": ">=0.10.1"
   }

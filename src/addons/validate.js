@@ -1,14 +1,14 @@
-define("fileupload-validate",[
+define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     'skylark-jquery',
-    'skylark-jqueryui',
-    "fileupload-process"
+    'skylark-jqueryui/widget',
+    "../fileupload-ui"
 ],function (langx,eventer,$) {
     'use strict';
 
     // Append to the default processQueue:
-    $.blueimp.fileupload.prototype.options.processQueue.push(
+    $.blueimp.fileuploadui.prototype.options.processQueue.push(
         {
             action: 'validate',
             // Always trigger this action,
@@ -25,7 +25,7 @@ define("fileupload-validate",[
 
     // The File Upload Validation plugin extends the fileupload widget
     // with file validation functionality:
-    $.widget('blueimp.fileupload', $.blueimp.fileupload, {
+    $.widget('blueimp.fileuploadui', $.blueimp.fileuploadui, {
 
         options: {
             /*
@@ -94,5 +94,7 @@ define("fileupload-validate",[
         }
 
     });
+
+    return $;
 
 });

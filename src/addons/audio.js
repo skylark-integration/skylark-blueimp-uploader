@@ -1,15 +1,15 @@
-define("fileupload-audio",[
+define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui',
-    "fileupload-process"
+    'skylark-jqueryui/widget',
+    "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
 
     // Prepend to the default processQueue:
-    $.blueimp.fileupload.prototype.options.processQueue.unshift(
+    $.blueimp.fileuploadui.prototype.options.processQueue.unshift(
         {
             action: 'loadAudio',
             // Use the action as prefix for the "@" options:
@@ -27,7 +27,7 @@ define("fileupload-audio",[
 
     // The File Upload Audio Preview plugin extends the fileupload widget
     // with audio preview functionality:
-    $.widget('blueimp.fileupload', $.blueimp.fileupload, {
+    $.widget('blueimp.fileuploadui', $.blueimp.fileuploadui, {
 
         options: {
             // The regular expression for the types of audio files to load,
@@ -79,5 +79,7 @@ define("fileupload-audio",[
         }
 
     });
+
+    return $;
 
 });

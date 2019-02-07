@@ -69,59 +69,9 @@
             </div>
         </div>
         <!-- The table listing the files available for upload/download -->
-        <table role="presentation" class="table table-striped"><tbody class="files"><tr class="template-download fade in">
-        <td>
-            <span class="preview">
-                
-            </span>
-        </td>
-        <td>
-            <p class="name">
-                
-                    <a href="http://expressjs-fileupload.cloudno.de/uploaded/files/Turbo%20sheep%20Ep%202%20-%202D%20Animated%20Hand%20drawn%20short%20film.mp4" title="Turbo sheep Ep 2 - 2D Animated Hand drawn short film.mp4" download="Turbo sheep Ep 2 - 2D Animated Hand drawn short film.mp4">Turbo sheep Ep 2 - 2D Animated Hand drawn short film.mp4</a>
-                
-            </p>
-            
-        </td>
-        <td>
-            <span class="size">4.06 MB</span>
-        </td>
-        <td>
-            
-                <button class="btn btn-danger delete" data-type="DELETE" data-url="http://expressjs-fileupload.cloudno.de/uploaded/files/Turbo%20sheep%20Ep%202%20-%202D%20Animated%20Hand%20drawn%20short%20film.mp4">
-                    <i class="glyphicon glyphicon-trash"></i>
-                    <span>Delete</span>
-                </button>
-                <input type="checkbox" name="delete" value="1" class="toggle">
-            
-        </td>
-    </tr><tr class="template-download fade in">
-        <td>
-            <span class="preview">
-                
-            </span>
-        </td>
-        <td>
-            <p class="name">
-                
-                    <a href="http://expressjs-fileupload.cloudno.de/uploaded/files/WebGL%E4%B8%89%E7%BB%B4%E6%A1%A5%E6%A2%81%E5%8A%A8%E6%80%81%E4%BB%BF%E7%9C%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%A0%94%E7%A9%B6_%E7%8E%8B%E6%99%B6.caj" title="WebGL三维桥梁动态仿真关键技术研究_王晶.caj" download="WebGL三维桥梁动态仿真关键技术研究_王晶.caj">WebGL三维桥梁动态仿真关键技术研究_王晶.caj</a>
-                
-            </p>
-            
-        </td>
-        <td>
-            <span class="size">3.43 MB</span>
-        </td>
-        <td>
-            
-                <button class="btn btn-danger delete" data-type="DELETE" data-url="http://expressjs-fileupload.cloudno.de/uploaded/files/WebGL%E4%B8%89%E7%BB%B4%E6%A1%A5%E6%A2%81%E5%8A%A8%E6%80%81%E4%BB%BF%E7%9C%9F%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%A0%94%E7%A9%B6_%E7%8E%8B%E6%99%B6.caj">
-                    <i class="glyphicon glyphicon-trash"></i>
-                    <span>Delete</span>
-                </button>
-                <input type="checkbox" name="delete" value="1" class="toggle">
-            
-        </td>
-    </tr><tr class="template-upload fade in">
+        <table role="presentation" class="table table-striped"><tbody class="files">
+
+    <tr class="template-upload fade in">
         <td>
             <span class="preview"><canvas width="80" height="42"></canvas></span>
         </td>
@@ -237,8 +187,21 @@
     </tr>
 {% } %}
 </script>
+
 <script src="./javascripts/skylark-utils-dom-all.js"></script>
 <script src="./javascripts/skylark-jquery.js"></script>
+<script src="./javascripts/skylark-utils-imagex.js"></script>
+<script src="./javascripts/skylark-utils-filer.js"></script>
+<script type="text/javascript" src="./javascripts/skylark-jqueryui-interact.js"></script>
+<script type="text/javascript" src="./javascripts/skylark-jqueryui.js"></script>
+
+
+<script type="text/javascript" src="./javascripts/skylark-blueimp-uploader.js"></script>
+
+<!--
+<script src="./javascripts/skylark-utils-dom-all.js"></script>
+<script src="./javascripts/skylark-jquery.js"></script>
+-->
 <!--<script src="http://registry.skylarkjs.org/packages/skylark-jquery/v0.9.6-beta/uncompressed/skylark-jquery-all.js"></script>-->
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <!--<script src="./javascripts/jquery.min.js"></script> -->
@@ -246,14 +209,20 @@
 <!--
     <script src="./javascripts/jquery.ui.widget.js"></script> 
 -->
+<!--
 <script type="text/javascript" src="./javascripts/skylark-jqueryui-interact.js"></script>
 <script type="text/javascript" src="./javascripts/skylark-jqueryui.js"></script>
+-->
 
 <!-- The Templates plugin is included to render the upload/download listings -->
+<!--
 <script src="./javascripts/tmpl.js"></script>
+-->
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
 <!--<script src="./javascripts/load-image.min.js"></script> -->
+<!--
 <script src="./javascripts/skylark-utils-imagex.js"></script>
+-->
 
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->
 <!--<script src="./javascripts/canvas-to-blob.min.js"></script>-->
@@ -264,24 +233,40 @@
 <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
 <!--<script src="./javascripts/jquery.iframe-transport.js"></script>-->
 <!-- The basic File Upload plugin -->
+<!--
 <script src="./javascripts/skylark-utils-filer.js"></script>
+-->
 <!--
 <script src="./javascripts/fileupload.js"></script>
 -->
+<!--
 <script src="./javascripts/fileupload.js"></script>
+-->
 
 <!-- The File Upload processing plugin -->
+<!--
 <script src="./javascripts/fileupload-process.js"></script>
+-->
 <!-- The File Upload image preview & resize plugin -->
+<!--
 <script src="./javascripts/fileupload-image.js"></script>
+-->
 <!-- The File Upload audio preview plugin -->
+<!--
 <script src="./javascripts/fileupload-audio.js"></script>
+-->
 <!-- The File Upload video preview plugin -->
+<!--
 <script src="./javascripts/fileupload-video.js"></script>
+-->
 <!-- The File Upload validation plugin -->
+<!--
 <script src="./javascripts/fileupload-validate.js"></script>
+-->
 <!-- The File Upload user interface plugin -->
+<!--
 <script src="./javascripts/fileupload-ui.js"></script>
+-->
 <!-- The main application script -->
 <script src="./javascripts/main.js"></script>
 <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->

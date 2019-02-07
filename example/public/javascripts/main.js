@@ -15,7 +15,7 @@ $(function () {
     'use strict';
 
     // Initialize the jQuery File Upload widget:
-    $('#fileupload').fileupload({
+    $('#fileupload').fileuploadui({
         // Uncomment the following to send cross-domain cookies:
         //xhrFields: {withCredentials: true},
         picker: $(".fileinput-button"),
@@ -23,7 +23,7 @@ $(function () {
     });
 
     // Enable iframe cross-domain access via redirect option:
-    $('#fileupload').fileupload(
+    $('#fileupload').fileuploadui(
         'option',
         'redirect',
         window.location.href.replace(

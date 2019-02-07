@@ -1,15 +1,15 @@
-define("fileupload-image",[
+define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
     "skylark-utils-imagex",
     'skylark-jquery',
-    'skylark-jqueryui',
-    "fileupload-process"
+    'skylark-jqueryui/widget',
+    "../fileupload-ui"
 ],function (langx,eventer,imagex,$) {
     'use strict';
 
     // Prepend to the default processQueue:
-    $.blueimp.fileupload.prototype.options.processQueue.unshift(
+    $.blueimp.fileuploadui.prototype.options.processQueue.unshift(
         {
             action: 'loadImageMetaData',
             disableImageHead: '@',
@@ -78,7 +78,7 @@ define("fileupload-image",[
 
     // The File Upload Resize plugin extends the fileupload widget
     // with image resize functionality:
-    $.widget('blueimp.fileupload', $.blueimp.fileupload, {
+    $.widget('blueimp.fileuploadui', $.blueimp.fileuploadui, {
 
         options: {
             // The regular expression for the types of images to load:
@@ -285,4 +285,5 @@ define("fileupload-image",[
 
     });
 
+    return $;
 });

@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":["define","$"],"mappings":";;;;;;;AAAAA,QACC,kBACA,iBACA,iBACA,iBACA,qBACC,SAASC,GACV,OAAOA","file":"../main.js","sourcesContent":["define([\r\n\t\"./fileupload-ui\",\r\n\t\"./addons/image\",\r\n\t\"./addons/audio\",\r\n\t\"./addons/video\",\r\n\t\"./addons/validate\"\r\n],function($) {\r\n\treturn $;\r\n})"]}
