@@ -1,10 +1,10 @@
 define([
     "skylark-langx/langx",
     "skylark-utils-dom/eventer",
+    "skylark-utils-filer/uploader",
     "skylark-jquery",
-    "./tmpl",
-    "./fileupload"
-],function (langx,eventer,$,tmpl,uploader) {
+    "./tmpl"
+],function (langx,eventer,uploader,$,tmpl) {
 
     'use strict';
 
