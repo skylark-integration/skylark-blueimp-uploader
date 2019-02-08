@@ -12441,7 +12441,8 @@ define('skylark-blueimp-uploader/fileupload',[
     // By default, files added via file input selection, paste, drag & drop or
     // "add" method are uploaded immediately, but it is possible to override
     // the "add" callback option to queue file uploads.
-    $.widget('blueimp.fileupload', {
+
+    var FileUploader = langx.Evented.inherit( {
 
         options: {
             // The drop target element(s), by the default the complete document.
@@ -12647,7 +12648,10 @@ define('skylark-blueimp-uploader/fileupload',[
             'picker',
             'dropZone',
             'pasteZone',
-            'multipart'
+            'multipart',
+            'filesContainer',
+            'uploadTemplateId',
+            'downloadTemplateId'            
         ],
 
         _BitrateTimer: function () {
@@ -12915,6 +12919,13 @@ define('skylark-blueimp-uploader/fileupload',[
             this._trigger('fail', null, options);
         },
 
+        _trigger : function(type,event,data) {
+            var e = eventer.proxy(event);
+            e.type = type;
+            e.data =data;
+            return this.trigger(e,data);
+        },
+
         _onAlways: function (jqXHRorResult, textStatus, jqXHRorError, options) {
             // jqXHRorResult, textStatus and jqXHRorError are added to the
             // options object via done and fail callbacks
@@ -13117,7 +13128,9 @@ define('skylark-blueimp-uploader/fileupload',[
                 /^\/.*\/[igm]{0,3}$/.test(value);
         },
 
-        _create: function () {
+        _construct: function (elm,options) {
+            this._elm = elm;
+            this.options = langx.mixin({},this.options,options);
             this._initSpecialOptions();
             this._slots = [];
             this._sequence = this._getXHRPromise(true);
@@ -13170,8 +13183,18 @@ define('skylark-blueimp-uploader/fileupload',[
 
     });
 
-    return $;
 
+    function uploader(elm,options) {
+        var fuInst = new FileUploader(elm,options);
+        fuInst.on("all",function(evt,data){
+            var typ = evt.type;
+            if (langx.isFunction(options[typ])) {
+                options[typ].call(fuInst._elm,evt,data);
+            }
+        });
+    }
+
+    return uploader;
 
 });
 
@@ -13181,15 +13204,15 @@ define('skylark-blueimp-uploader/fileupload-ui',[
     "skylark-jquery",
     "./tmpl",
     "./fileupload"
-],function (langx,eventer,$,tmpl) {
+],function (langx,eventer,$,tmpl,uploader) {
 
     'use strict';
 
-    $.blueimp.fileupload.prototype._specialOptions.push(
-        'filesContainer',
-        'uploadTemplateId',
-        'downloadTemplateId'
-    );
+//    $.blueimp.fileupload.prototype._specialOptions.push(
+//        'filesContainer',
+//        'uploadTemplateId',
+//        'downloadTemplateId'
+//    );
 
     // The UI version extends the file upload widget
     // and adds complete user interface interaction:
@@ -13964,7 +13987,8 @@ define('skylark-blueimp-uploader/fileupload-ui',[
             this._initSpecialOptions();
             this._initEventHandlers();
 
-            $(this.element).fileupload(this.options);
+            //$(this.element).fileupload(this.options);
+            this._uploader = uploader(this.element,this.options);
             this._resetFinishedDeferreds();
             if (!$.support.fileInput) {
                 this._disableFileInputButton();

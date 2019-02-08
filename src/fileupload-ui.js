@@ -4,15 +4,15 @@ define([
     "skylark-jquery",
     "./tmpl",
     "./fileupload"
-],function (langx,eventer,$,tmpl) {
+],function (langx,eventer,$,tmpl,uploader) {
 
     'use strict';
 
-    $.blueimp.fileupload.prototype._specialOptions.push(
-        'filesContainer',
-        'uploadTemplateId',
-        'downloadTemplateId'
-    );
+//    $.blueimp.fileupload.prototype._specialOptions.push(
+//        'filesContainer',
+//        'uploadTemplateId',
+//        'downloadTemplateId'
+//    );
 
     // The UI version extends the file upload widget
     // and adds complete user interface interaction:
@@ -787,7 +787,8 @@ define([
             this._initSpecialOptions();
             this._initEventHandlers();
 
-            $(this.element).fileupload(this.options);
+            //$(this.element).fileupload(this.options);
+            this._uploader = uploader(this.element,this.options);
             this._resetFinishedDeferreds();
             if (!$.support.fileInput) {
                 this._disableFileInputButton();
